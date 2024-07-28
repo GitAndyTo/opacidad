@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reproductor de Música</title>
+  </head>
+
+  <style>
+    .audio-player {
+      width: 300px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    #play-pause-button {
+      margin-right: 10px;
+    }
+    #progress-bar {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    #volume-control {
+      width: 100%;
+    }
+  </style>
+
+  <body>
+    <div class="audio-player">
+      <div class="controls">
+        <button id="play-pause-button">Reproducir</button>
+        <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+      </div>
+      <input type="range" id="progress-bar" min="0" max="100" value="0" step="0.1">
+      <input type="range" id="volume-control" min="0" max="1" step="0.01" value="1">
+    </div>
+
+    <audio id="background-music">
+      <source src="Rels B - A MÍ (Videoclip Oficial).mp3" type="audio/mpeg" />
+    </audio>
+  </body>
+
+  <script>
+    var audio = document.getElementById("background-music");
+    var playPauseButton = document.getElementById("play-pause-button");
+    var volumeControl = document.getElementById("volume-control");
+    var progressBar = document.getElementById("progress-bar");
+    var currentTimeSpan = document.getElementById("current-time");
+    var durationSpan = document.getElementById("duration");
+
+    function formatTime(seconds) {
+      var minutes = Math.floor(seconds / 60);
+      var remainingSeconds = Math.floor(seconds % 60);
+      return minutes + ":" + (remainingSeconds < 10 ? "0" : "") + remainingSeconds;
+    }
+
+    playPauseButton.addEventListener("click", function () {
+      if (audio.paused) {
+        audio.play();
+        playPauseButton.textContent = "Pausar";
+      } else {
+        audio.pause();
+        playPauseButton.textContent = "Reproducir";
+      }
+    });
+
+    volumeControl.addEventListener("input", function () {
+      audio.volume = volumeControl.value;
+    });
+
+    progressBar.addEventListener("input", function () {
+      var time = audio.duration * (progressBar.value / 100);
+      audio.currentTime = time;
+    });
+
+    audio.addEventListener("timeupdate", function () {
+      var progress = (audio.currentTime / audio.duration) * 100;
+      progressBar.value = progress;
+      currentTimeSpan.textContent = formatTime(audio.currentTime);
+    });
+
+    audio.addEventListener("loadedmetadata", function () {
+      durationSpan.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener("ended", function () {
+      document.body.style.opacity = 0;
+    });
+  </script>
+</html>
